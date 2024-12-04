@@ -1,0 +1,105 @@
+.grid {
+    border:    1px solid black;
+    height:    40%;
+    width:     40%;
+    display:   flex;
+    flex-wrap: wrap;
+}
+
+td:nth-child(even) {
+    background-color: #dddddd;
+}
+.container {
+    border: 1px solid black;
+    width: 40%;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.grid div {
+    height: 20px;
+    width:  20px;
+}
+
+.ending_block {
+    background-color: red;
+}
+
+.starting_block {
+    background-color: blue;
+}
+
+.l1, .l2, .l3 {
+    background-color: brown;
+}
+
+.l4, .l5 {
+    background-color: lightblue;
+}
+
+.c1 {
+    background-color: black;
+}
+
+.c2, .c3 {
+    background-color: lightgrey;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+/* Change the link color to #111 (black) on hover */
+li a:hover {
+    background-color: #111;
+}
+
+.frog {
+    background-color: green;
+}
+
+.grid_si {
+    border:      1px solid black;
+    height:    300px;
+    width:     300px;
+    display:   flex;
+    flex-wrap: wrap;
+}
+
+.grid_si div {
+    height: 20px;
+    width:  20px;
+}
+
+.invader {
+    background-color: purple;
+    border-radius: 10px;
+}
+
+.shooter {
+    background-color: green;
+}
+
+.laser {
+    background-color: orange;
+}
+.boom {
+    background-color: red;
+}
+
