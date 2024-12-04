@@ -39,7 +39,7 @@ let executeMove = (function () {
 		// this is where we're going to find our x, y coords
 		let coordI = 1
 
-		// If taking a piece (indicated by the x), our x, y coords come 1 index later.
+		// If taking a piece this turn (indicated by the x), our x, y coords come 1 index later.
 		if (moveText.charAt(1) === 'x') {
 			if (moveText.length !== 4) {
 				throw Error("Expected a string of length 4 since we're capturing a piece.")
