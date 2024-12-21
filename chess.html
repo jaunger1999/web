@@ -1,53 +1,13 @@
 <!--https://stackoverflow.com/questions/26432492/chessboard-html5-only-->
 <!DOCTYPE html>
 <html>
+
 <head>
-	<title></title>
+	<title>Chess</title>
 	<meta charset="UTF-8">
-	<style>
-		.chess-board {
-			border-spacing: 0;
-			border-collapse: collapse;
-		}
-
-        .chess-board th {
-            padding: .5em;
-        }
-
-        .chess-board th + th {
-            border-bottom: 1px solid #000;
-        }
-
-        .chess-board th:first-child,
-        .chess-board td:last-child {
-            border-right: 1px solid #000;
-        }
-
-        .chess-board tr:last-child td {
-            border-bottom: 1px solid;
-        }
-
-        .chess-board th:empty {
-            border: none;
-        }
-
-        .chess-board td {
-            width:     8dvh;
-            height:    8dvh;
-            font-size: 6dvh;
-            text-align: center;
-            line-height: 0;
-        }
-
-        .chess-board .light {
-            background: #eee;
-        }
-
-        .chess-board .dark {
-            background: #aaa;
-        }
-	</style>
+	<link rel="stylesheet" type="text/css" href="chess.css" />
 </head>
+
 <body>
 	<table id="chessBoard" class="chess-board">
 		<tbody>
@@ -152,9 +112,9 @@
 			</tr>
 		</tbody>
 	</table>
-	
+
 	<br>
-	
+
 	<form action="" id="chessMoveForm">
 		<input type="text" id="moveText" placeholder="Enter a move">
 		<button type="submit">Submit</button>
@@ -162,4 +122,5 @@
 
 	<script src="chess.js"></script>
 </body>
+
 </html>
