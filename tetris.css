@@ -43,3 +43,7 @@
 .board .piece {
 	background: #000
 }
+
+.board .active-piece {
+	background: #000
+}

@@ -15,6 +15,7 @@ const pieces = [l, t, L, reverseL, square, zig, zag]
 
 const board = document.getElementById("tetris-board")
 const height = board.rows.length
+const width = board.rows[0].cells.length
 
 // coordinates of the spaces our piece is occupying
 let millisecondsPerTic = 500
@@ -28,16 +29,16 @@ const getNewPiece = () => structuredClone(pieces[Math.floor(Math.random() * piec
 let currPiece = getNewPiece()
 
 function gameTic() {
-	const pieceCannotMove =
-		currPiece.some((xy) =>
-			xy[1] >= height - 1 || // we're at the bottom of the grid or
-			(
-				xy[1] >= 0 && board.rows[xy[1] + 1].cells[xy[0]].classList.contains("piece") && // we're above a block and
-				currPiece.every((e) => e[0] !== xy[0] || e[1] !== xy[1] + 1)                    // it isn't a part of currPiece
-			)
-		)
+	// if we can't move
+	if (currPiece.some((xy) => xy[1] >= height - 1 || xy[1] >= 0 && board.rows[xy[1] + 1].cells[xy[0]].classList.contains("piece"))) {
+		// set the piece in place
+		currPiece.forEach(function(xy) {
+			if (xy[1] >= 0 && xy[1] < height) {
+				board.rows[xy[1]].cells[xy[0]].classList.remove("active-piece")
+				board.rows[xy[1]].cells[xy[0]].classList.add("piece")
+			}
+		})
 
-	if (pieceCannotMove) {
 		// if we're still above the top of the grid, set gameOver and return.
 		if (currPiece.some((xy) => xy[1] < 0)) {
 			gameOver = true
@@ -49,7 +50,7 @@ function gameTic() {
 
 		currPiece.forEach(function(xy) {
 			if (xy[1] >= 0) {
-				board.rows[xy[1]].cells[xy[0]].classList.add("piece")
+				board.rows[xy[1]].cells[xy[0]].classList.add("active-piece")
 			}
 		})
 
@@ -60,11 +61,11 @@ function gameTic() {
 	// move each block in the piece down
 	currPiece.forEach(function(xy) {
 		if (xy[1] >= 0 && xy[1] < height) {
-			board.rows[xy[1]].cells[xy[0]].classList.remove("piece")
+			board.rows[xy[1]].cells[xy[0]].classList.remove("active-piece")
 		}
 
 		xy[1]++
-		board.rows[xy[1]].cells[xy[0]].classList.add("piece")
+		board.rows[xy[1]].cells[xy[0]].classList.add("active-piece")
 	})
 }
 
@@ -78,14 +79,31 @@ let down = "ArrowDown"
 function playerMovePiece(e) {
 	switch (e.key) {
 		case left:
+			if (currPiece.every((xy) => xy[0] > 0 && !board.rows[xy[1]].cells[xy[0] - 1].classList.contains("piece"))) {
+				currPiece.forEach(function(xy) {
+					board.rows[xy[1]].cells[xy[0]].classList.remove("active-piece")
+					xy[0]--
+					board.rows[xy[1]].cells[xy[0]].classList.add("active-piece")
+				})
+			}
 			break
 		case right:
+			if (currPiece.every((xy) => xy[0] < width - 1 && !board.rows[xy[1]].cells[xy[0] + 1].classList.contains("piece"))) {
+				// iterate twice so we don't remove already placed blocks
+				currPiece.forEach((xy) => board.rows[xy[1]].cells[xy[0]].classList.remove("active-piece"))
+
+				currPiece.forEach(function(xy) {
+					xy[0]++
+					board.rows[xy[1]].cells[xy[0]].classList.add("active-piece")
+				})
+			}
 			break
 		case up:
 			break
 		case down:
 			break
 	}
+
 }
 
 document.addEventListener("keydown", playerMovePiece)
