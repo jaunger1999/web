@@ -1,8 +1,3 @@
-// different piece patterns and the starting grid coordinates of each block
-// the blocks that start closer to the bottom of the board need to be at the start of the list
-// this ensures blocks don't overlap when we shift the piece down
-// i'm too lazy to fix the edge case that causes these problems
-// i'm also gonna put the furthest left pieces to the left and furthest right pieces to the right.
 const l = [
 	[[-1, 0], [0, 0], [1, 0], [2, 0]],
 	[[1, -2], [1, -1], [1, 0], [1, 1]],
@@ -15,15 +10,15 @@ const t = [
 ]
 const L = [
 	[[0, 1], [0, 0], [1, 0], [2, 0]],
-	[[0, 1], [0, 0], [1, 0], [2, 0]],
+	[[0, -1], [1, -1], [1, 0], [1, 1]],
 	[[2, -1], [0, 0], [1, 0], [2, 0]],
-	[[0, 1], [0, 0], [1, 0], [2, 0]],
+	[[2, 1], [1, -1], [1, 0], [1, 1]],
 ]
 const reverseL = [
 	[[2, 1], [0, 0], [1, 0], [2, 0]],
-	[[2, 1], [0, 0], [1, 0], [2, 0]],
+	[[0, 1], [1, -1], [1, 0], [1, 1]],
 	[[0, -1], [0, 0], [1, 0], [2, 0]],
-	[[2, 1], [0, 0], [1, 0], [2, 0]],
+	[[2, -1], [1, -1], [1, 0], [1, 1]],
 ]
 const square = [
 	[[0, 1], [1, 1], [0, 0], [1, 0]],
@@ -52,6 +47,7 @@ const getRandomPiece = () => pieces[Math.floor(Math.random() * pieces.length)]
 const getStartPos = () => [4, -1]
 
 // set our starting piece
+let rotationI = 0
 let currPieceRef = getRandomPiece()
 let pos = getStartPos()
 let currPiece = structuredClone(currPieceRef[0])
@@ -78,6 +74,7 @@ function gameTic() {
 		}
 
 		// get and display a new piece
+		rotationI = 0
 		currPieceRef = getRandomPiece()
 		pos = getStartPos()
 		currPiece = structuredClone(currPieceRef[0])
@@ -101,14 +98,44 @@ function gameTic() {
 		if (xy[1] >= 0 && xy[1] < height) {
 			board.rows[xy[1]].cells[xy[0]].classList.remove("active-piece")
 		}
-
 		xy[1]++
-		board.rows[xy[1]].cells[xy[0]].classList.add("active-piece")
+	})
+	currPiece.forEach(function(xy) {
+		if (xy[1] >= 0 && xy[1] < height) {
+			board.rows[xy[1]].cells[xy[0]].classList.add("active-piece")
+		}
 	})
 	pos[1]++
 }
 
 gameTicID = setInterval(gameTic, millisecondsPerTic)
+
+function rotatePiece() {
+	let tempRotI = (rotationI + 1) % currPieceRef.length
+	let tempPiece = structuredClone(currPieceRef[tempRotI])
+
+	tempPiece.forEach(function(xy) {
+		xy[0] += pos[0]
+		xy[1] += pos[1]
+	})
+
+	if (tempPiece.every((xy) => xy[1] < height - 1 && xy[0] < width && xy[0] >= 0 && (xy[1] < 0 || !board.rows[xy[1]].cells[xy[0]].classList.contains("piece")))) {
+		currPiece.forEach(function(xy) {
+			if (xy[1] >= 0) {
+				board.rows[xy[1]].cells[xy[0]].classList.remove("active-piece")
+			}
+		})
+
+		tempPiece.forEach(function(xy) {
+			if (xy[1] >= 0) {
+				board.rows[xy[1]].cells[xy[0]].classList.add("active-piece")
+			}
+		})
+
+		currPiece = tempPiece
+		rotationI = tempRotI
+	}
+}
 
 let left = "ArrowLeft"
 let right = "ArrowRight"
@@ -118,34 +145,39 @@ let down = "ArrowDown"
 function playerMovePiece(e) {
 	switch (e.key) {
 		case left:
-			if (currPiece.every((xy) => xy[0] > 0 && !board.rows[xy[1]].cells[xy[0] - 1].classList.contains("piece"))) {
+			if (currPiece.every((xy) => xy[0] >= 0 && !board.rows[xy[1]].cells[xy[0] - 1].classList.contains("piece"))) {
 				currPiece.forEach(function(xy) {
 					board.rows[xy[1]].cells[xy[0]].classList.remove("active-piece")
 					xy[0]--
+				})
+				currPiece.forEach(function(xy) {
 					board.rows[xy[1]].cells[xy[0]].classList.add("active-piece")
 				})
 			}
 			pos[0]--
 			break
 		case right:
-			if (currPiece.every((xy) => xy[0] < width - 1 && !board.rows[xy[1]].cells[xy[0] + 1].classList.contains("piece"))) {
-				// iterate twice so we don't remove already placed blocks
-				currPiece.forEach((xy) => board.rows[xy[1]].cells[xy[0]].classList.remove("active-piece"))
+			if (currPiece.every((xy) => xy[0] < width && !board.rows[xy[1]].cells[xy[0] + 1].classList.contains("piece"))) {
+				currPiece.forEach(function(xy) {
+					board.rows[xy[1]].cells[xy[0]].classList.remove("active-piece")
+					xy[0]++
+				})
 
 				currPiece.forEach(function(xy) {
-					xy[0]++
-					board.rows[xy[1]].cells[xy[0]].classList.add("active-piece")
+					if (xy[1] >= 0) {
+						board.rows[xy[1]].cells[xy[0]].classList.add("active-piece")
+					}
 				})
 
 				pos[0]++
 			}
 			break
 		case up:
+			rotatePiece()
 			break
 		case down:
 			break
 	}
-
 }
 
 document.addEventListener("keydown", playerMovePiece)
