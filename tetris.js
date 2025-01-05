@@ -3,13 +3,17 @@
 // this ensures blocks don't overlap when we shift the piece down
 // i'm too lazy to fix the edge case that causes these problems
 // i'm also gonna put the furthest left pieces to the left and furthest right pieces to the right.
-const l = [[3, -1], [4, -1], [5, -1], [6, -1]]
-const t = [[5, 0], [4, -1], [5, -1], [6, -1]]
-const L = [[4, 0], [4, -1], [5, -1], [6, -1]]
-const reverseL = [[6, 0], [4, -1], [5, -1], [6, -1]]
-const square = [[4, 0], [5, 0], [4, -1], [5, -1]]
-const zig = [[5, 0], [6, 0], [4, -1], [5, -1]]
-const zag = [[4, 0], [5, 0], [5, -1], [6, -1]]
+const l = [[-1, 0], [0, 0], [1, 0], [2, 0]]
+//[[1, -2], [1, -1], [1, 0], [1, 1]],
+//]
+const t = [
+	[1, 1], [0, 0], [1, 0], [2, 0]
+]
+const L = [[0, 1], [0, 0], [1, 0], [2, 0]]
+const reverseL = [[2, 1], [0, 0], [1, 0], [2, 0]]
+const square = [[0, 1], [1, 1], [0, 0], [1, 0]]
+const zig = [[1, 1], [2, 1], [0, 0], [1, 0]]
+const zag = [[0, 1], [1, 1], [1, 0], [2, 0]]
 
 const pieces = [l, t, L, reverseL, square, zig, zag]
 
@@ -23,10 +27,17 @@ let gameTicID
 let gameOver = false
 let level = 1
 
-const getNewPiece = () => structuredClone(pieces[Math.floor(Math.random() * pieces.length)])
+const getRandomPiece = () => pieces[Math.floor(Math.random() * pieces.length)]
+const getStartPos = () => [4, -1]
 
 // set our starting piece
-let currPiece = getNewPiece()
+let currPieceRef = getRandomPiece()
+let pos = getStartPos()
+let currPiece = structuredClone(currPieceRef)
+currPiece.forEach(function (xy) { 
+	xy[0] += pos[0]
+	xy[1] += pos[1]
+})
 
 function gameTic() {
 	// if we can't move
@@ -46,7 +57,13 @@ function gameTic() {
 		}
 
 		// get and display a new piece
-		currPiece = getNewPiece()
+		currPieceRef = getRandomPiece()
+		pos = getStartPos()
+		currPiece = structuredClone(currPieceRef)
+		currPiece.forEach(function (xy) { 
+			xy[0] += pos[0]
+			xy[1] += pos[1]
+		})
 
 		currPiece.forEach(function(xy) {
 			if (xy[1] >= 0) {
@@ -67,6 +84,7 @@ function gameTic() {
 		xy[1]++
 		board.rows[xy[1]].cells[xy[0]].classList.add("active-piece")
 	})
+	pos[1]++
 }
 
 gameTicID = setInterval(gameTic, millisecondsPerTic)
@@ -86,6 +104,7 @@ function playerMovePiece(e) {
 					board.rows[xy[1]].cells[xy[0]].classList.add("active-piece")
 				})
 			}
+			pos[0]--
 			break
 		case right:
 			if (currPiece.every((xy) => xy[0] < width - 1 && !board.rows[xy[1]].cells[xy[0] + 1].classList.contains("piece"))) {
@@ -96,6 +115,8 @@ function playerMovePiece(e) {
 					xy[0]++
 					board.rows[xy[1]].cells[xy[0]].classList.add("active-piece")
 				})
+
+				pos[0]++
 			}
 			break
 		case up:
