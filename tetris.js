@@ -3,17 +3,39 @@
 // this ensures blocks don't overlap when we shift the piece down
 // i'm too lazy to fix the edge case that causes these problems
 // i'm also gonna put the furthest left pieces to the left and furthest right pieces to the right.
-const l = [[-1, 0], [0, 0], [1, 0], [2, 0]]
-//[[1, -2], [1, -1], [1, 0], [1, 1]],
-//]
-const t = [
-	[1, 1], [0, 0], [1, 0], [2, 0]
+const l = [
+	[[-1, 0], [0, 0], [1, 0], [2, 0]],
+	[[1, -2], [1, -1], [1, 0], [1, 1]],
 ]
-const L = [[0, 1], [0, 0], [1, 0], [2, 0]]
-const reverseL = [[2, 1], [0, 0], [1, 0], [2, 0]]
-const square = [[0, 1], [1, 1], [0, 0], [1, 0]]
-const zig = [[1, 1], [2, 1], [0, 0], [1, 0]]
-const zag = [[0, 1], [1, 1], [1, 0], [2, 0]]
+const t = [
+	[[1, 1], [0, 0], [1, 0], [2, 0]],
+	[[1, 1], [0, 0], [1, 0], [1, -1]],
+	[[1, -1], [0, 0], [1, 0], [2, 0]],
+	[[1, 1], [2, 0], [1, 0], [1, -1]],
+]
+const L = [
+	[[0, 1], [0, 0], [1, 0], [2, 0]],
+	[[0, 1], [0, 0], [1, 0], [2, 0]],
+	[[2, -1], [0, 0], [1, 0], [2, 0]],
+	[[0, 1], [0, 0], [1, 0], [2, 0]],
+]
+const reverseL = [
+	[[2, 1], [0, 0], [1, 0], [2, 0]],
+	[[2, 1], [0, 0], [1, 0], [2, 0]],
+	[[0, -1], [0, 0], [1, 0], [2, 0]],
+	[[2, 1], [0, 0], [1, 0], [2, 0]],
+]
+const square = [
+	[[0, 1], [1, 1], [0, 0], [1, 0]],
+]
+const zig = [
+	[[1, 1], [2, 1], [0, 0], [1, 0]],
+	[[1, 1], [2, -1], [2, 0], [1, 0]],
+]
+const zag = [
+	[[0, 1], [1, 1], [1, 0], [2, 0]],
+	[[1, -1], [2, 1], [1, 0], [2, 0]],
+]
 
 const pieces = [l, t, L, reverseL, square, zig, zag]
 
@@ -21,7 +43,6 @@ const board = document.getElementById("tetris-board")
 const height = board.rows.length
 const width = board.rows[0].cells.length
 
-// coordinates of the spaces our piece is occupying
 let millisecondsPerTic = 500
 let gameTicID
 let gameOver = false
@@ -33,8 +54,8 @@ const getStartPos = () => [4, -1]
 // set our starting piece
 let currPieceRef = getRandomPiece()
 let pos = getStartPos()
-let currPiece = structuredClone(currPieceRef)
-currPiece.forEach(function (xy) { 
+let currPiece = structuredClone(currPieceRef[0])
+currPiece.forEach(function(xy) {
 	xy[0] += pos[0]
 	xy[1] += pos[1]
 })
@@ -59,8 +80,8 @@ function gameTic() {
 		// get and display a new piece
 		currPieceRef = getRandomPiece()
 		pos = getStartPos()
-		currPiece = structuredClone(currPieceRef)
-		currPiece.forEach(function (xy) { 
+		currPiece = structuredClone(currPieceRef[0])
+		currPiece.forEach(function(xy) {
 			xy[0] += pos[0]
 			xy[1] += pos[1]
 		})
